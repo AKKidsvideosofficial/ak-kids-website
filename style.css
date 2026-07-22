@@ -219,3 +219,71 @@ background:#ff3b30;
 background:#d63031;
 
 }
+
+/* Featured Videos */
+
+.video-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:25px;
+margin-top:30px;
+}
+
+.video-card{
+background:#fff;
+padding:18px;
+border-radius:20px;
+box-shadow:0 8px 20px rgba(0,0,0,.12);
+transition:.3s;
+}
+
+.video-card:hover{
+transform:translateY(-10px);
+}
+
+.video-card iframe{
+width:100%;
+height:220px;
+border:none;
+border-radius:15px;
+}
+
+.video-card h3{
+margin-top:15px;
+text-align:center;
+color:#4d96ff;
+}
+
+.programs{
+padding:70px 20px;
+background:#fff8ec;
+}
+
+.program-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+margin-top:30px;
+}
+
+.program-card{
+background:white;
+padding:30px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 10px 25px rgba(0,0,0,.1);
+transition:.3s;
+}
+
+.program-card:hover{
+transform:translateY(-10px);
+}
+
+.program-card h3{
+color:#4d96ff;
+margin-bottom:15px;
+}
+
+.program-card p{
+line-height:1.6;
+}
