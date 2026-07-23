@@ -1,54 +1,60 @@
-// ===============================
-// AK Kids Video Website
-// script.js
-// ===============================
+/* =====================================================
+   AK Kids Video Website
+   script.js
+===================================================== */
 
-// Replace with your NEW restricted API key
-const API_KEY = "YOUR_NEW_API_KEY";
+// ============================================
+// CONFIGURATION
+// ============================================
 
-// Your YouTube Channel ID
+const API_KEY = "AIzaSyD-5jqZ2WhKxAwzpVS7vrfAvRKifrLRyso";
+
 const CHANNEL_ID = "UC0sQWWGBsCS6WJLbDOhRFZw";
 
-// Number of videos to display
 const MAX_RESULTS = 12;
 
-// HTML container
-const videoGrid = document.getElementById("videoGrid");
+// ============================================
 
-// -------------------------------
-// Load Latest Videos
-// -------------------------------
+const videoContainer = document.getElementById("videoContainer");
 
-async function loadLatestVideos() {
+const searchInput = document.getElementById("searchInput");
 
-    if (!videoGrid) return;
+// ============================================
+// LOAD LATEST VIDEOS
+// ============================================
 
-    videoGrid.innerHTML = `
+async function loadVideos() {
+
+    if (!videoContainer) return;
+
+    videoContainer.innerHTML = `
         <div class="loading">
-            Loading latest videos...
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading Latest Videos...</p>
         </div>
     `;
 
     try {
 
         const url =
-        `https://www.googleapis.com/youtube/v3/search?` +
-        `key=${API_KEY}` +
-        `&channelId=${CHANNEL_ID}` +
-        `&part=snippet,id` +
-        `&order=date` +
-        `&maxResults=${MAX_RESULTS}` +
-        `&type=video`;
+            `https://www.googleapis.com/youtube/v3/search?part=snippet,id` +
+            `&channelId=${CHANNEL_ID}` +
+            `&maxResults=${MAX_RESULTS}` +
+            `&order=date` +
+            `&type=video` +
+            `&key=${API_KEY}`;
 
         const response = await fetch(url);
 
         const data = await response.json();
 
         if (data.error) {
+
             throw new Error(data.error.message);
+
         }
 
-        videoGrid.innerHTML = "";
+        videoContainer.innerHTML = "";
 
         data.items.forEach(video => {
 
@@ -59,7 +65,7 @@ async function loadLatestVideos() {
             const thumbnail =
                 video.snippet.thumbnails.high.url;
 
-            const published =
+            const date =
                 new Date(video.snippet.publishedAt)
                 .toLocaleDateString();
 
@@ -69,23 +75,22 @@ async function loadLatestVideos() {
 
             card.innerHTML = `
 
-                <img
-                    src="${thumbnail}"
-                    alt="${title}"
-                >
+                <img src="${thumbnail}" alt="${title}">
 
                 <div class="video-info">
 
                     <h3>${title}</h3>
 
-                    <p>📅 ${published}</p>
+                    <p>📅 ${date}</p>
 
                     <a
-                    href="https://www.youtube.com/watch?v=${videoId}"
-                    target="_blank"
-                    class="watch-btn">
+                        href="https://www.youtube.com/watch?v=${videoId}"
+                        target="_blank"
+                        class="watch-btn">
 
-                    ▶ Watch Video
+                        <i class="fab fa-youtube"></i>
+
+                        Watch Video
 
                     </a>
 
@@ -93,39 +98,35 @@ async function loadLatestVideos() {
 
             `;
 
-            videoGrid.appendChild(card);
+            videoContainer.appendChild(card);
 
         });
 
     }
 
-    catch(error){
+    catch (error) {
 
         console.error(error);
 
-        videoGrid.innerHTML = `
+        videoContainer.innerHTML = `
 
-        <div class="error">
+            <div class="error">
 
-        ❌ Unable to load videos.
+                <h3>Unable to Load Videos</h3>
 
-        <br><br>
+                <p>${error.message}</p>
 
-        Check:
+                <br>
 
-        <br>
+                <p>Check:</p>
 
-        ✔ API Key
+                <p>✔ YouTube Data API v3 enabled</p>
 
-        <br>
+                <p>✔ API key restrictions</p>
 
-        ✔ YouTube Data API enabled
+                <p>✔ Channel ID</p>
 
-        <br>
-
-        ✔ API restrictions
-
-        </div>
+            </div>
 
         `;
 
@@ -133,66 +134,100 @@ async function loadLatestVideos() {
 
 }
 
-// -------------------------------
-// Search Videos
-// -------------------------------
+// ============================================
+// SEARCH FILTER
+// ============================================
 
-const searchInput =
-document.getElementById("searchInput");
+if (searchInput) {
 
-if(searchInput){
+    searchInput.addEventListener("keyup", function () {
 
-searchInput.addEventListener("keyup",function(){
+        const value = this.value.toLowerCase();
 
-const filter =
-this.value.toLowerCase();
+        const cards = document.querySelectorAll(".video-card");
 
-const cards =
-document.querySelectorAll(".video-card");
+        cards.forEach(card => {
 
-cards.forEach(card=>{
+            const title =
+                card.querySelector("h3")
+                .innerText
+                .toLowerCase();
 
-const text =
-card.innerText.toLowerCase();
+            if (title.includes(value)) {
 
-card.style.display =
-text.includes(filter)
-? "block"
-: "none";
+                card.style.display = "";
 
-});
+            } else {
 
-});
+                card.style.display = "none";
+
+            }
+
+        });
+
+    });
 
 }
 
-// -------------------------------
-// Smooth Scroll
-// -------------------------------
+// ============================================
+// SMOOTH SCROLL
+// ============================================
 
-document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+document.querySelectorAll('a[href^="#"]').forEach(link => {
 
-anchor.addEventListener("click",function(e){
+    link.addEventListener("click", function (e) {
 
-e.preventDefault();
+        e.preventDefault();
 
-document.querySelector(this.getAttribute("href"))
-.scrollIntoView({
+        const target =
+            document.querySelector(
+                this.getAttribute("href")
+            );
 
-behavior:"smooth"
+        if (target) {
+
+            target.scrollIntoView({
+
+                behavior: "smooth"
+
+            });
+
+        }
+
+    });
 
 });
 
-});
+// ============================================
+// HEADER SHADOW ON SCROLL
+// ============================================
+
+window.addEventListener("scroll", () => {
+
+    const header = document.querySelector("header");
+
+    if (!header) return;
+
+    if (window.scrollY > 30) {
+
+        header.style.boxShadow =
+            "0 10px 30px rgba(0,0,0,.10)";
+
+    } else {
+
+        header.style.boxShadow =
+            "0 4px 18px rgba(0,0,0,.08)";
+
+    }
 
 });
 
-// -------------------------------
-// Load videos when page opens
-// -------------------------------
+// ============================================
+// LOAD PAGE
+// ============================================
 
-window.onload = () => {
+window.addEventListener("DOMContentLoaded", () => {
 
-loadLatestVideos();
+    loadVideos();
 
-};
+});
