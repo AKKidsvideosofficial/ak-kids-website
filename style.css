@@ -2930,3 +2930,491 @@ width:220px;
 }
 
 }
+
+/* =====================================================
+   MODULE 1C
+   KIDS ANIMATED BACKGROUND
+===================================================== */
+
+.kids-bg{
+
+    position:absolute;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+}
+
+/* =========================
+   CLOUDS
+========================= */
+
+.cloud{
+
+    position:absolute;
+
+    background:white;
+
+    border-radius:100px;
+
+    opacity:.85;
+
+    filter:blur(.5px);
+
+}
+
+.cloud::before,
+.cloud::after{
+
+    content:"";
+
+    position:absolute;
+
+    background:white;
+
+    border-radius:50%;
+
+}
+
+.cloud1{
+
+    width:170px;
+
+    height:55px;
+
+    top:70px;
+
+    left:-220px;
+
+    animation:moveCloud 32s linear infinite;
+
+}
+
+.cloud1::before{
+
+    width:70px;
+
+    height:70px;
+
+    left:20px;
+
+    top:-25px;
+
+}
+
+.cloud1::after{
+
+    width:90px;
+
+    height:90px;
+
+    right:25px;
+
+    top:-38px;
+
+}
+
+.cloud2{
+
+    width:130px;
+
+    height:45px;
+
+    top:180px;
+
+    left:-180px;
+
+    animation:moveCloud 42s linear infinite;
+
+    animation-delay:5s;
+
+}
+
+.cloud2::before{
+
+    width:55px;
+
+    height:55px;
+
+    left:18px;
+
+    top:-20px;
+
+}
+
+.cloud2::after{
+
+    width:70px;
+
+    height:70px;
+
+    right:15px;
+
+    top:-28px;
+
+}
+
+.cloud3{
+
+    width:200px;
+
+    height:60px;
+
+    top:40px;
+
+    left:-260px;
+
+    animation:moveCloud 55s linear infinite;
+
+    animation-delay:12s;
+
+}
+
+.cloud3::before{
+
+    width:75px;
+
+    height:75px;
+
+    left:25px;
+
+    top:-30px;
+
+}
+
+.cloud3::after{
+
+    width:95px;
+
+    height:95px;
+
+    right:20px;
+
+    top:-40px;
+
+}
+
+/* =========================
+   BALLOONS
+========================= */
+
+.balloon{
+
+    position:absolute;
+
+    width:45px;
+
+    height:60px;
+
+    border-radius:50%;
+
+}
+
+.balloon::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+
+    top:60px;
+
+    width:2px;
+
+    height:90px;
+
+    background:#999;
+
+}
+
+.balloon-red{
+
+    background:#ff5a5f;
+
+    left:8%;
+
+    bottom:-120px;
+
+    animation:floatBalloon 16s linear infinite;
+
+}
+
+.balloon-blue{
+
+    background:#4f7cff;
+
+    right:10%;
+
+    bottom:-180px;
+
+    animation:floatBalloon 20s linear infinite;
+
+    animation-delay:4s;
+
+}
+
+.balloon-yellow{
+
+    background:#ffd54f;
+
+    left:70%;
+
+    bottom:-150px;
+
+    animation:floatBalloon 18s linear infinite;
+
+    animation-delay:8s;
+
+}
+
+/* =========================
+   BUBBLES
+========================= */
+
+.bubble{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.35);
+
+    animation:floatBubble linear infinite;
+
+}
+
+.bubble1{
+
+    width:25px;
+
+    height:25px;
+
+    left:18%;
+
+    bottom:-30px;
+
+    animation-duration:9s;
+
+}
+
+.bubble2{
+
+    width:18px;
+
+    height:18px;
+
+    left:55%;
+
+    bottom:-20px;
+
+    animation-duration:12s;
+
+}
+
+.bubble3{
+
+    width:30px;
+
+    height:30px;
+
+    left:82%;
+
+    bottom:-30px;
+
+    animation-duration:10s;
+
+}
+
+.bubble4{
+
+    width:22px;
+
+    height:22px;
+
+    left:40%;
+
+    bottom:-20px;
+
+    animation-duration:14s;
+
+}
+
+/* =========================
+   STARS
+========================= */
+
+.star{
+
+    position:absolute;
+
+    font-size:28px;
+
+    animation:twinkle 3s ease-in-out infinite;
+
+}
+
+.star1{
+
+    top:120px;
+
+    right:15%;
+
+}
+
+.star2{
+
+    top:260px;
+
+    left:20%;
+
+}
+
+.star3{
+
+    top:80px;
+
+    left:60%;
+
+}
+
+/* =========================
+   SUN
+========================= */
+
+.sun{
+
+    position:absolute;
+
+    right:60px;
+
+    top:35px;
+
+    font-size:65px;
+
+    animation:sunFloat 5s ease-in-out infinite;
+
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+
+@keyframes moveCloud{
+
+    from{
+
+        transform:translateX(0);
+
+    }
+
+    to{
+
+        transform:translateX(calc(100vw + 350px));
+
+    }
+
+}
+
+@keyframes floatBalloon{
+
+    from{
+
+        transform:translateY(0);
+
+    }
+
+    to{
+
+        transform:translateY(-120vh);
+
+    }
+
+}
+
+@keyframes floatBubble{
+
+    from{
+
+        transform:translateY(0) scale(.6);
+
+        opacity:.2;
+
+    }
+
+    to{
+
+        transform:translateY(-120vh) scale(1.4);
+
+        opacity:0;
+
+    }
+
+}
+
+@keyframes twinkle{
+
+    0%,100%{
+
+        opacity:.4;
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        opacity:1;
+
+        transform:scale(1.3);
+
+    }
+
+}
+
+@keyframes sunFloat{
+
+    0%,100%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(-12px);
+
+    }
+
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:768px){
+
+    .sun{
+
+        font-size:45px;
+
+        right:20px;
+
+    }
+
+    .star{
+
+        font-size:20px;
+
+    }
+
+    .cloud{
+
+        transform:scale(.75);
+
+    }
+
+}
