@@ -2109,3 +2109,305 @@ font-size:28px;
 }
 
 }
+
+/* ===============================
+   VIDEO THUMBNAIL
+================================ */
+
+.video-thumbnail{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.video-thumbnail img{
+
+    width:100%;
+
+    display:block;
+
+    transition:.35s;
+
+}
+
+.play-overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.35);
+
+    opacity:0;
+
+    transition:.35s;
+
+}
+
+.play-overlay i{
+
+    font-size:70px;
+
+    color:white;
+
+}
+
+.video-card:hover .play-overlay{
+
+    opacity:1;
+
+}
+
+.video-card:hover img{
+
+    transform:scale(1.08);
+
+}
+
+.video-date{
+
+    color:#777;
+
+    margin:12px 0;
+
+}
+
+/* ===============================
+   VIDEO MODAL
+================================ */
+
+.video-modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.85);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:25px;
+
+    z-index:9999;
+
+}
+
+.video-modal.show{
+
+    display:flex;
+
+}
+
+.video-modal-content{
+
+    width:100%;
+
+    max-width:960px;
+
+    position:relative;
+
+}
+
+.video-modal iframe{
+
+    width:100%;
+
+    aspect-ratio:16/9;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:#000;
+
+}
+
+.close-video{
+
+    position:absolute;
+
+    top:-15px;
+
+    right:-15px;
+
+    width:45px;
+
+    height:45px;
+
+    background:#ff0000;
+
+    color:#fff;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:30px;
+
+    cursor:pointer;
+
+}
+
+/* ===============================
+SKELETON
+===============================*/
+
+.skeleton-thumb{
+
+height:210px;
+
+background:#ececec;
+
+animation:pulse 1.4s infinite;
+
+}
+
+.skeleton-line{
+
+height:18px;
+
+background:#ececec;
+
+margin:15px;
+
+border-radius:20px;
+
+animation:pulse 1.4s infinite;
+
+}
+
+.skeleton-line.short{
+
+width:60%;
+
+}
+
+.skeleton-btn{
+
+height:45px;
+
+margin:20px 15px;
+
+border-radius:50px;
+
+background:#ececec;
+
+animation:pulse 1.4s infinite;
+
+}
+
+@keyframes pulse{
+
+0%{
+
+opacity:.5;
+
+}
+
+50%{
+
+opacity:1;
+
+}
+
+100%{
+
+opacity:.5;
+
+}
+
+}
+
+/* ===============================
+FADE
+===============================*/
+
+.fade-in{
+
+animation:fadeCard .6s;
+
+}
+
+@keyframes fadeCard{
+
+from{
+
+opacity:0;
+
+transform:translateY(40px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+#backToTop{
+
+position:fixed;
+
+right:25px;
+
+bottom:25px;
+
+width:55px;
+
+height:55px;
+
+border:none;
+
+border-radius:50%;
+
+background:#ff0000;
+
+color:white;
+
+font-size:24px;
+
+cursor:pointer;
+
+opacity:0;
+
+visibility:hidden;
+
+transition:.3s;
+
+z-index:999;
+
+}
+
+#backToTop.show{
+
+opacity:1;
+
+visibility:visible;
+
+}
+
+#backToTop:hover{
+
+transform:translateY(-5px);
+
+}

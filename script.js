@@ -1,48 +1,189 @@
 /* =====================================================
-   AK Kids Video Website
-   script.js
+   AK Kids Video Website v2.0
+   Module 1
+   Configuration + YouTube Uploads Playlist Loader
 ===================================================== */
 
-// ============================================
+"use strict";
+
+// =====================================================
 // CONFIGURATION
-// ============================================
+// =====================================================
+
+// IMPORTANT:
+// Replace with your NEW restricted YouTube API Key.
+// Do NOT use an API key that has already been exposed.
 
 const API_KEY = "AIzaSyD-5jqZ2WhKxAwzpVS7vrfAvRKifrLRyso";
 
 const CHANNEL_ID = "UC0sQWWGBsCS6WJLbDOhRFZw";
 
-const MAX_RESULTS = 12;
+const VIDEOS_PER_PAGE = 12;
 
-// ============================================
+// =====================================================
+// GLOBAL VARIABLES
+// =====================================================
+
+let uploadsPlaylistId = "";
+
+let nextPageToken = "";
+
+let isLoading = false;
+
+// =====================================================
+// MODULE 3 VARIABLES
+// =====================================================
+
+let allVideos = [];
+
+let filteredVideos = [];
+
+let currentVisible = VIDEOS_PER_PAGE;
+
+// =====================================================
+// DOM ELEMENTS
+// =====================================================
 
 const videoContainer = document.getElementById("videoContainer");
 
 const searchInput = document.getElementById("searchInput");
 
-// ============================================
-// LOAD LATEST VIDEOS
-// ============================================
+const loadMoreBtn = document.getElementById("loadMoreBtn");
 
-async function loadVideos() {
+// =====================================================
+// SHOW LOADING
+// =====================================================
 
-    if (!videoContainer) return;
+function showLoading(){
+
+if(videoContainer.children.length>0)return;
+
+videoContainer.innerHTML="";
+
+for(let i=0;i<6;i++){
+
+const card=document.createElement("div");
+
+card.className="video-card skeleton";
+
+card.innerHTML=`
+
+<div class="skeleton-thumb"></div>
+
+<div class="video-info">
+
+<div class="skeleton-line"></div>
+
+<div class="skeleton-line short"></div>
+
+<div class="skeleton-btn"></div>
+
+</div>
+
+`;
+
+videoContainer.appendChild(card);
+
+}
+
+}
+// =====================================================
+// SHOW ERROR
+// =====================================================
+
+function showError(message) {
 
     videoContainer.innerHTML = `
-        <div class="loading">
-            <i class="fas fa-spinner fa-spin"></i>
-            <p>Loading Latest Videos...</p>
+
+        <div class="error">
+
+            <h3>Unable to Load Videos</h3>
+
+            <p>${message}</p>
+
         </div>
+
     `;
+
+}
+
+// =====================================================
+// GET UPLOADS PLAYLIST ID
+// =====================================================
+
+async function getUploadsPlaylist() {
 
     try {
 
         const url =
-            `https://www.googleapis.com/youtube/v3/search?part=snippet,id` +
-            `&channelId=${CHANNEL_ID}` +
-            `&maxResults=${MAX_RESULTS}` +
-            `&order=date` +
-            `&type=video` +
-            `&key=${API_KEY}`;
+        `https://www.googleapis.com/youtube/v3/channels?part=contentDetails&id=${CHANNEL_ID}&key=${API_KEY}`;
+
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        if(data.error){
+
+    switch(data.error.code){
+
+        case 400:
+
+            throw new Error("Invalid API request.");
+
+        case 403:
+
+            throw new Error("API quota exceeded or key restrictions are blocking access.");
+
+        case 404:
+
+            throw new Error("Channel not found.");
+
+        default:
+
+            throw new Error(data.error.message);
+
+    }
+
+}
+
+    catch (error) {
+
+        console.error(error);
+
+        showError(error.message);
+
+    }
+
+}
+
+// =====================================================
+// LOAD VIDEOS
+// =====================================================
+
+async function loadVideos() {
+
+    if (isLoading) return;
+
+    isLoading = true;
+
+    showLoading();
+
+    try {
+
+        if (!uploadsPlaylistId) {
+
+            await getUploadsPlaylist();
+
+        }
+
+        let url =
+        `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${uploadsPlaylistId}&maxResults=${VIDEOS_PER_PAGE}&key=${API_KEY}`;
+
+        if (nextPageToken) {
+
+            url += `&pageToken=${nextPageToken}`;
+
+        }
 
         const response = await fetch(url);
 
@@ -54,53 +195,29 @@ async function loadVideos() {
 
         }
 
-        videoContainer.innerHTML = "";
+        nextPageToken = data.nextPageToken || "";
 
-        data.items.forEach(video => {
+        if (videoContainer.querySelector(".loading")) {
 
-            const videoId = video.id.videoId;
+            videoContainer.innerHTML = "";
 
-            const title = video.snippet.title;
+        }
 
-            const thumbnail =
-                video.snippet.thumbnails.high.url;
+        displayVideos(data.items);
 
-            const date =
-                new Date(video.snippet.publishedAt)
-                .toLocaleDateString();
+        if (loadMoreBtn) {
 
-            const card = document.createElement("div");
+            if (nextPageToken) {
 
-            card.className = "video-card";
+                loadMoreBtn.style.display = "inline-flex";
 
-            card.innerHTML = `
+            } else {
 
-                <img src="${thumbnail}" alt="${title}">
+                loadMoreBtn.style.display = "none";
 
-                <div class="video-info">
+            }
 
-                    <h3>${title}</h3>
-
-                    <p>📅 ${date}</p>
-
-                    <a
-                        href="https://www.youtube.com/watch?v=${videoId}"
-                        target="_blank"
-                        class="watch-btn">
-
-                        <i class="fab fa-youtube"></i>
-
-                        Watch Video
-
-                    </a>
-
-                </div>
-
-            `;
-
-            videoContainer.appendChild(card);
-
-        });
+        }
 
     }
 
@@ -108,126 +225,238 @@ async function loadVideos() {
 
         console.error(error);
 
-        videoContainer.innerHTML = `
+        showError(error.message);
 
-            <div class="error">
+    }
 
-                <h3>Unable to Load Videos</h3>
+    finally {
 
-                <p>${error.message}</p>
-
-                <br>
-
-                <p>Check:</p>
-
-                <p>✔ YouTube Data API v3 enabled</p>
-
-                <p>✔ API key restrictions</p>
-
-                <p>✔ Channel ID</p>
-
-            </div>
-
-        `;
+        isLoading = false;
 
     }
 
 }
 
-// ============================================
-// SEARCH FILTER
-// ============================================
-
-if (searchInput) {
-
-    searchInput.addEventListener("keyup", function () {
-
-        const value = this.value.toLowerCase();
-
-        const cards = document.querySelectorAll(".video-card");
-
-        cards.forEach(card => {
-
-            const title =
-                card.querySelector("h3")
-                .innerText
-                .toLowerCase();
-
-            if (title.includes(value)) {
-
-                card.style.display = "";
-
-            } else {
-
-                card.style.display = "none";
-
-            }
-
-        });
-
-    });
-
-}
-
-// ============================================
-// SMOOTH SCROLL
-// ============================================
-
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-
-    link.addEventListener("click", function (e) {
-
-        e.preventDefault();
-
-        const target =
-            document.querySelector(
-                this.getAttribute("href")
-            );
-
-        if (target) {
-
-            target.scrollIntoView({
-
-                behavior: "smooth"
-
-            });
-
-        }
-
-    });
-
-});
-
-// ============================================
-// HEADER SHADOW ON SCROLL
-// ============================================
-
-window.addEventListener("scroll", () => {
-
-    const header = document.querySelector("header");
-
-    if (!header) return;
-
-    if (window.scrollY > 30) {
-
-        header.style.boxShadow =
-            "0 10px 30px rgba(0,0,0,.10)";
-
-    } else {
-
-        header.style.boxShadow =
-            "0 4px 18px rgba(0,0,0,.08)";
-
-    }
-
-});
-
-// ============================================
-// LOAD PAGE
-// ============================================
+// =====================================================
+// INITIALIZE WEBSITE
+// =====================================================
 
 window.addEventListener("DOMContentLoaded", () => {
 
     loadVideos();
 
 });
+
+// =====================================================
+// DISPLAY VIDEOS
+// =====================================================
+
+videos.forEach(video=>{
+
+    allVideos.push(video);
+
+});
+
+function displayVideos(videos) {
+
+    videos.forEach(video => {
+
+        const videoId = video.snippet.resourceId.videoId;
+
+        const title = video.snippet.title;
+
+        const thumbnails = video.snippet.thumbnails;
+
+const thumbnail =
+    thumbnails.maxres?.url ||
+    thumbnails.standard?.url ||
+    thumbnails.high?.url ||
+    thumbnails.medium?.url ||
+    thumbnails.default?.url;
+
+        const published =
+            new Date(video.snippet.publishedAt)
+            .toLocaleDateString();
+
+        const card = document.createElement("div");
+
+        card.className = "video-card";
+
+        card.innerHTML = `
+
+            <div class="video-thumbnail">
+
+                <img
+    src="${thumbnail}"
+    alt="${title}"
+    loading="lazy"
+    decoding="async">
+
+                <div class="play-overlay">
+
+                    <i class="fas fa-play-circle"></i>
+
+                </div>
+
+            </div>
+
+            <div class="video-info">
+
+                <h3>${title}</h3>
+
+                <p class="video-date">
+
+                    📅 ${published}
+
+                </p>
+
+ // =====================================================
+// LOAD MORE
+// =====================================================
+
+if(loadMoreBtn){
+
+loadMoreBtn.addEventListener("click",()=>{
+
+loadVideos();
+
+});
+
+}
+
+            </div>
+
+        `;
+
+        card.classList.add("fade-in");
+
+videoContainer.appendChild(card);
+
+    });
+
+}
+
+// =====================================================
+// LIVE SEARCH
+// =====================================================
+
+if(searchInput){
+
+searchInput.addEventListener("keyup",function(){
+
+const value=this.value.toLowerCase().trim();
+
+const cards=document.querySelectorAll(".video-card");
+
+cards.forEach(card=>{
+
+const title=
+card.querySelector("h3")
+.innerText
+.toLowerCase();
+
+if(title.includes(value)){
+
+card.style.display="";
+
+}else{
+
+card.style.display="none";
+
+}
+
+});
+
+});
+
+}
+
+// =====================================================
+// VIDEO POPUP PLAYER
+// =====================================================
+
+const modal = document.getElementById("videoModal");
+
+const player = document.getElementById("youtubePlayer");
+
+const closeModal = document.getElementById("closeModal");
+
+function playVideo(videoId){
+
+    if(!modal || !player) return;
+
+    player.src =
+    `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+
+    modal.classList.add("show");
+
+    document.body.style.overflow = "hidden";
+
+}
+
+function closeVideo(){
+
+    if(!modal || !player) return;
+
+    modal.classList.remove("show");
+
+    player.src = "";
+
+    document.body.style.overflow = "auto";
+
+}
+
+if(closeModal){
+
+    closeModal.addEventListener("click",closeVideo);
+
+}
+
+window.addEventListener("click",(e)=>{
+
+    if(e.target===modal){
+
+        closeVideo();
+
+    }
+
+});
+
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Escape"){
+
+        closeVideo();
+
+    }
+
+});
+
+const topBtn = document.getElementById("backToTop");
+
+window.addEventListener("scroll",()=>{
+
+if(window.scrollY>400){
+
+topBtn.classList.add("show");
+
+}else{
+
+topBtn.classList.remove("show");
+
+}
+
+});
+
+topBtn.addEventListener("click",()=>{
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+});
+
