@@ -12,9 +12,9 @@
 
 const CONFIG = {
 
-    API_KEY: "UC0sQWWGBsCS6WJLbDOhRFZw",
+    API_KEY: "AIzaSyD-5jqZ2WhKxAwzpVS7vrfAvRKifrLRyso",
 
-    CHANNEL_ID: "AIzaSyD-5jqZ2WhKxAwzpVS7vrfAvRKifrLRyso",
+    CHANNEL_ID: "UC0sQWWGBsCS6WJLbDOhRFZw",
 
     MAX_RESULTS: 12,
 
